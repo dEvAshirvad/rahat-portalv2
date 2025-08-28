@@ -38,7 +38,7 @@ const ROLE_ACCESS = {
 	tehsildar: ["/", "/ready-to-close", "/cases/[id]", "/cases/[id]/close"],
 
 	// Default fallback
-	default: ["/"],
+	default: ["/", "/cases/[id]"],
 };
 
 // Helper function to check if a path matches a pattern
