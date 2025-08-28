@@ -3,10 +3,10 @@
 import { useState } from "react";
 import {
 	useListUsers,
-	createUserMutation,
-	updateUserMutation,
-	banUserMutation,
-	setUserPasswordMutation,
+	useCreateUserMutation,
+	useUpdateUserMutation,
+	useBanUserMutation,
+	useSetUserPasswordMutation,
 	type ListUsersParams,
 	type User,
 } from "@/queries/admin";
@@ -59,11 +59,9 @@ import { toast } from "sonner";
 import {
 	Plus,
 	Search,
-	Filter,
 	Edit,
 	Ban,
 	Key,
-	Eye,
 	MoreHorizontal,
 	Loader2,
 	ChevronLeft,
@@ -76,6 +74,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
+import { AxiosError } from "axios";
 
 // Form schemas
 const createUserSchema = z.object({
@@ -136,10 +135,10 @@ export default function UserManagement() {
 
 	// Queries and mutations
 	const { data: usersData, isLoading, refetch } = useListUsers(searchParams);
-	const createUserMutationFn = createUserMutation();
-	const updateUserMutationFn = updateUserMutation();
-	const banUserMutationFn = banUserMutation();
-	const setPasswordMutationFn = setUserPasswordMutation();
+	const createUserMutationFn = useCreateUserMutation();
+	const updateUserMutationFn = useUpdateUserMutation();
+	const banUserMutationFn = useBanUserMutation();
+	const setPasswordMutationFn = useSetUserPasswordMutation();
 
 	// Forms
 	const createForm = useForm<CreateUserFormData>({
@@ -218,8 +217,10 @@ export default function UserManagement() {
 			createForm.reset();
 			setCreateDialogOpen(false);
 			refetch();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to create user");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || "Failed to create user");
+			}
 		}
 	};
 
@@ -241,8 +242,10 @@ export default function UserManagement() {
 			setUpdateDialogOpen(false);
 			setSelectedUser(null);
 			refetch();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to update user");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || "Failed to update user");
+			}
 		}
 	};
 
@@ -259,8 +262,12 @@ export default function UserManagement() {
 			setPasswordDialogOpen(false);
 			setSelectedUser(null);
 			passwordForm.reset();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to update password");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(
+					error.response?.data.message || "Failed to update password"
+				);
+			}
 		}
 	};
 
@@ -280,8 +287,10 @@ export default function UserManagement() {
 			setSelectedUser(null);
 			banForm.reset();
 			refetch();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to ban user");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || "Failed to ban user");
+			}
 		}
 	};
 

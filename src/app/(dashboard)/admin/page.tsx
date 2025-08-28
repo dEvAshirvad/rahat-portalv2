@@ -1,15 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Shield, Settings, Activity } from "lucide-react";
+import { Users, Activity } from "lucide-react";
 import UserManagement from "@/components/Admin/UserManagement";
 import SessionManagement from "@/components/Admin/SessionManagement";
 

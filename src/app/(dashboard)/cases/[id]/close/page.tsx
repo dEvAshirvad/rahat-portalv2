@@ -8,14 +8,13 @@ import { format } from "date-fns";
 import {
 	ArrowLeft,
 	FileText,
-	User,
-	Calendar,
 	DollarSign,
 	Banknote,
 	CreditCard,
 	CheckCircle,
 	AlertCircle,
 	Save,
+	Calendar,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -43,6 +42,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 // Form validation schema
 const closeCaseSchema = z.object({
@@ -112,9 +112,10 @@ function CloseCasePage() {
 
 			toast.success("Case closed successfully!");
 			router.push(`/cases/${caseId}`);
-		} catch (error: any) {
-			console.error("Error closing case:", error);
-			toast.error(error?.message || "Failed to close case");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || "Failed to close case");
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -294,8 +295,8 @@ function CloseCasePage() {
 								<FileText className="size-12 text-muted-foreground mx-auto mb-4" />
 								<h3 className="text-lg font-semibold mb-2">Case Not Found</h3>
 								<p className="text-muted-foreground mb-4">
-									The case you're looking for doesn't exist or you don't have
-									permission to view it.
+									The case you&apos;re looking for doesn&apos;t exist or you
+									don&apos;t have permission to view it.
 								</p>
 								<Button asChild>
 									<Link href="/cases">
@@ -464,7 +465,10 @@ function CloseCasePage() {
 									<Select
 										value={form.watch("paymentMethod")}
 										onValueChange={(value) =>
-											form.setValue("paymentMethod", value as any)
+											form.setValue(
+												"paymentMethod",
+												value as "bank_transfer" | "cash" | "cheque" | "online"
+											)
 										}>
 										<SelectTrigger className="mt-2">
 											<SelectValue placeholder="Select payment method" />

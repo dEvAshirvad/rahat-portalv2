@@ -48,6 +48,7 @@ import { useCreateCase, useThanaInchargeSearch } from "@/queries/cases";
 import { toast } from "sonner";
 import { Plus, Loader2, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AxiosError } from "axios";
 
 // Form validation schema
 const createCaseSchema = z.object({
@@ -122,8 +123,10 @@ export default function CreateCaseDialog({ onSuccess }: CreateCaseDialogProps) {
 			form.reset();
 			setOpen(false);
 			onSuccess?.();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to create case");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || "Failed to create case");
+			}
 		}
 	};
 

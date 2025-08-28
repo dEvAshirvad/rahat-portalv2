@@ -10,7 +10,6 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
 	Table,
@@ -26,34 +25,15 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import {
-	Search,
-	Eye,
-	Loader2,
-	Monitor,
-	Clock,
-	Globe,
-	User,
-} from "lucide-react";
+import { Clock, Eye, Globe, Loader2, Monitor, User } from "lucide-react";
 import { format } from "date-fns";
 
 export default function SessionManagement() {
-	const [selectedUserId, setSelectedUserId] = useState<string>("");
+	const [selectedUserId, _] = useState<string>("");
 	const [sessionDialogOpen, setSessionDialogOpen] = useState(false);
 
-	const {
-		data: sessionsData,
-		isLoading,
-		refetch,
-	} = useListUserSessions(selectedUserId);
-
-	const handleViewSessions = (userId: string) => {
-		setSelectedUserId(userId);
-		setSessionDialogOpen(true);
-	};
+	const { data: sessionsData, isLoading } = useListUserSessions(selectedUserId);
 
 	const isSessionExpired = (expiresAt: string) => {
 		return new Date(expiresAt) < new Date();

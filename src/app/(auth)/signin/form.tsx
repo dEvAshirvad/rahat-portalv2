@@ -1,6 +1,6 @@
 "use client";
 
-import { EyeIcon, EyeOffIcon, GalleryVerticalEnd, Loader2 } from "lucide-react";
+import { EyeIcon, EyeOffIcon, GalleryVerticalEnd } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 
@@ -80,7 +79,7 @@ export default function SigninForm({
 
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
 		try {
-			const response = await signInMutation.mutateAsync({
+			await signInMutation.mutateAsync({
 				...data,
 			});
 

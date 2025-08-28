@@ -2,22 +2,18 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "@/queries/auth";
-import { useCaseById, useWorkflowStatus, Case } from "@/queries/cases";
+import { useCaseById } from "@/queries/cases";
 import { format } from "date-fns";
 import {
 	ArrowLeft,
 	FileText,
 	User,
 	Calendar,
-	MapPin,
 	Phone,
-	Mail,
 	Download,
 	Edit,
 	Clock,
 	CheckCircle,
-	XCircle,
-	AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -156,8 +152,8 @@ function CaseDetailPage() {
 								<FileText className="size-12 text-muted-foreground mx-auto mb-4" />
 								<h3 className="text-lg font-semibold mb-2">Case Not Found</h3>
 								<p className="text-muted-foreground mb-4">
-									The case you're looking for doesn't exist or you don't have
-									permission to view it.
+									The case you&apos;re looking for doesn&apos;t exist or you
+									don&apos;t have permission to view it.
 								</p>
 								<Button asChild>
 									<Link href="/cases">
@@ -342,7 +338,7 @@ function CaseDetailPage() {
 						<CardContent>
 							{caseItem.documents.length > 0 ? (
 								<div className="space-y-3">
-									{caseItem.documents.map((doc, index) => (
+									{caseItem.documents.map((doc) => (
 										<div
 											key={doc.fileId._id}
 											className="flex items-center justify-between p-3 border rounded-lg">

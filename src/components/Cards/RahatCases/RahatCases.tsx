@@ -1,15 +1,6 @@
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import {
-	Book,
-	BookAlert,
-	BookCheck,
-	BookX,
-	Ellipsis,
-	Clock,
-	CheckCircle,
-} from "lucide-react";
+import { Book, BookCheck, Ellipsis, Clock, CheckCircle } from "lucide-react";
 import React from "react";
 import { useCaseStats } from "@/queries/cases";
 import { Skeleton } from "@/components/ui/skeleton";

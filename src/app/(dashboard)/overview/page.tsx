@@ -25,7 +25,6 @@ import {
 	Calendar,
 	Target,
 } from "lucide-react";
-import { format } from "date-fns";
 import Link from "next/link";
 
 export default function OverviewPage() {

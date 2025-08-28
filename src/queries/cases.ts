@@ -186,7 +186,7 @@ export interface FileUploadResponse {
 		canAccess: boolean;
 		canDownload: boolean;
 		compressionInfo: {
-			compressedPaths: any;
+			compressedPaths: string[];
 			compressed: boolean;
 			originalSize: number;
 			compressionStatus: string;
@@ -254,7 +254,10 @@ export interface CaseStatsResponse {
 		approved: number;
 		rejected: number;
 		closed: number;
-		byStage: any[];
+		byStage: Array<{
+			stage: string;
+			count: number;
+		}>;
 	};
 }
 
@@ -337,8 +340,8 @@ export interface ApiError {
 	error?: string;
 	success?: boolean;
 	status?: number;
-	errors?: any[];
-	meta?: any;
+	errors?: string[];
+	meta?: Record<string, unknown>;
 	timestamp?: string;
 	cache?: boolean;
 }
@@ -774,7 +777,7 @@ export const useCloseCase = () => {
 		{ caseId: string; data: CloseCaseRequest }
 	>({
 		mutationFn: ({ caseId, data }) => casesApi.closeCase(caseId, data),
-		onSuccess: (data, variables) => {
+		onSuccess: () => {
 			// Invalidate all case-related queries
 			queryClient.invalidateQueries({ queryKey: ["cases"] });
 			queryClient.invalidateQueries({ queryKey: ["cases", "stats"] });

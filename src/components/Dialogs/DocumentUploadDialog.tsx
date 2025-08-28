@@ -22,7 +22,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
 	Select,
@@ -31,7 +30,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
 	useUploadDocuments,
@@ -42,6 +40,7 @@ import {
 import { toast } from "sonner";
 import { Loader2, Upload, FileText, Download, Eye } from "lucide-react";
 import FileUploader from "../comp-549";
+import { AxiosError } from "axios";
 
 // Form validation schema
 const documentUploadSchema = z.object({
@@ -64,7 +63,14 @@ export default function DocumentUploadDialog({
 	onSuccess,
 }: DocumentUploadDialogProps) {
 	const [open, setOpen] = useState(false);
-	const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+	const [uploadedFiles, setUploadedFiles] = useState<
+		Array<{
+			id: string;
+			file:
+				| File
+				| { name: string; size: number; type: string; url: string; id: string };
+		}>
+	>([]);
 	const [uploadedFileIds, setUploadedFileIds] = useState<string[]>([]);
 	const [isUploading, setIsUploading] = useState(false);
 
@@ -102,18 +108,19 @@ export default function DocumentUploadDialog({
 			const fileIds: string[] = [];
 
 			for (const file of uploadedFiles) {
-				const fileData = file.file instanceof File ? file.file : file;
+				// Only process if the file is actually a File object
+				if (file.file instanceof File) {
+					const uploadResponse = await uploadFileMutation.mutateAsync({
+						file: file.file,
+						entityType: data.entityType,
+						description: data.description,
+						tags: data.tags || data.entityType || "",
+						uploadedFor: caseNumber,
+						isPublic: true,
+					});
 
-				const uploadResponse = await uploadFileMutation.mutateAsync({
-					file: fileData,
-					entityType: data.entityType,
-					description: data.description,
-					tags: data.tags || data.entityType || "",
-					uploadedFor: caseNumber,
-					isPublic: true,
-				});
-
-				fileIds.push(uploadResponse.data.id);
+					fileIds.push(uploadResponse.data.id);
+				}
 			}
 
 			// Step 2: Link uploaded files to the case
@@ -138,8 +145,12 @@ export default function DocumentUploadDialog({
 			setUploadedFileIds([]);
 			setOpen(false);
 			onSuccess?.();
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to upload documents");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(
+					error.response?.data.message || "Failed to upload documents"
+				);
+			}
 		} finally {
 			setIsUploading(false);
 		}
@@ -159,7 +170,14 @@ export default function DocumentUploadDialog({
 		}
 	};
 
-	const handleFilesChange = (files: any[]) => {
+	const handleFilesChange = (
+		files: Array<{
+			id: string;
+			file:
+				| File
+				| { name: string; size: number; type: string; url: string; id: string };
+		}>
+	) => {
 		setUploadedFiles(files);
 	};
 

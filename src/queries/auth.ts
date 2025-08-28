@@ -103,10 +103,10 @@ export const useSignIn = () => {
 	const queryClient = useQueryClient();
 	return useMutation<SignInResponse, ApiError, SignInCredentials>({
 		mutationFn: authApi.signIn,
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["session"] });
 		},
-		onError: (error) => {},
+		onError: () => {},
 	});
 };
 

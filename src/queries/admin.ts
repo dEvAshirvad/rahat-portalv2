@@ -109,7 +109,7 @@ export interface SetPasswordResponse {
 }
 
 // Create User
-export const createUserMutation = () => {
+export const useCreateUserMutation = () => {
 	return useMutation({
 		mutationFn: async (data: CreateUserData): Promise<CreateUserResponse> => {
 			const response = await axiosInstance.post(
@@ -144,7 +144,7 @@ export const useListUsers = (params: ListUsersParams = {}) => {
 };
 
 // Update User
-export const updateUserMutation = () => {
+export const useUpdateUserMutation = () => {
 	return useMutation({
 		mutationFn: async (data: UpdateUserData): Promise<User> => {
 			const response = await axiosInstance.post(
@@ -174,7 +174,7 @@ export const useListUserSessions = (userId: string) => {
 };
 
 // Ban User
-export const banUserMutation = () => {
+export const useBanUserMutation = () => {
 	return useMutation({
 		mutationFn: async (data: BanUserData): Promise<BanUserResponse> => {
 			const response = await axiosInstance.post("/auth/admin/ban-user", data);
@@ -184,7 +184,7 @@ export const banUserMutation = () => {
 };
 
 // Set User Password
-export const setUserPasswordMutation = () => {
+export const useSetUserPasswordMutation = () => {
 	return useMutation({
 		mutationFn: async (data: SetPasswordData): Promise<SetPasswordResponse> => {
 			const response = await axiosInstance.post(

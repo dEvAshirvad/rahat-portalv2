@@ -15,10 +15,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Case } from "@/queries/cases";
 import { Button } from "@/components/ui/button";
@@ -41,11 +38,12 @@ import WorkflowUpdateDialog from "@/components/Dialogs/WorkflowUpdateDialog";
 import DocumentUploadDialog from "@/components/Dialogs/DocumentUploadDialog";
 import { useGenerateCasePDF } from "@/queries/cases";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const columns: ColumnDef<Case>[] = [
 	{
 		accessorKey: "caseId",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium pl-4">Case ID</p>;
 		},
 		cell: ({ row }) => {
@@ -54,7 +52,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		accessorKey: "victim.name",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium">Victim Name</p>;
 		},
 		cell: ({ row }) => {
@@ -63,7 +61,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		accessorKey: "stage",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium">Stage</p>;
 		},
 		cell: ({ row }) => {
@@ -90,7 +88,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		accessorKey: "status",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium">Status</p>;
 		},
 		cell: ({ row }) => {
@@ -117,7 +115,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		accessorKey: "documents",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium text-center">Documents</p>;
 		},
 		cell: ({ row }) => {
@@ -130,7 +128,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		accessorKey: "paymentId.status",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium text-center">Payment</p>;
 		},
 		cell: ({ row }) => {
@@ -166,7 +164,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		accessorKey: "createdAt",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium text-center">Created At</p>;
 		},
 		cell: ({ row }) => {
@@ -179,7 +177,7 @@ const columns: ColumnDef<Case>[] = [
 	},
 	{
 		id: "actions",
-		header: ({ column }) => {
+		header: () => {
 			return <p className="text-sm font-medium text-center">Actions</p>;
 		},
 		cell: ({ row }) => {
@@ -247,8 +245,10 @@ export function DownloadButton({ caseId }: { caseId: string }) {
 			window.URL.revokeObjectURL(url);
 
 			toast.success("PDF downloaded successfully!");
-		} catch (error: any) {
-			toast.error(error?.message || "Failed to download PDF");
+		} catch (error) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || "Failed to download PDF");
+			}
 		}
 	};
 
@@ -424,8 +424,6 @@ function PaginationControls({
 }
 
 function TableViewRenderer({ table }: { table: ReactTable<Case> }) {
-	const router = useRouter();
-
 	return (
 		<div className="">
 			<Table>

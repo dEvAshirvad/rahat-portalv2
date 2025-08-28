@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Case, RoleUserMap, useAllCases } from "@/queries/cases";
+import { Case, useAllCases } from "@/queries/cases";
 import { useSession } from "@/queries/auth";
 import {
 	Card,
@@ -30,10 +30,8 @@ import {
 } from "@/components/ui/select";
 import {
 	Search,
-	Filter,
 	Eye,
 	Download,
-	Edit,
 	MoreHorizontal,
 	Loader2,
 	ChevronLeft,
@@ -122,21 +120,6 @@ export default function CasesPage() {
 	const handlePageSizeChange = (newPageSize: number) => {
 		setPageSize(newPageSize);
 		setCurrentPage(1); // Reset to first page when changing page size
-	};
-
-	// Helper functions
-	const getStatusColor = (status: string) => {
-		const colors: { [key: string]: string } = {
-			pending: "bg-yellow-500",
-			approved: "bg-green-500",
-			rejected: "bg-red-500",
-			closed: "bg-gray-500",
-			sdm_review: "bg-blue-500",
-			tehsildar_review: "bg-yellow-500",
-			thana_incharge_review: "bg-orange-500",
-			collector_approval: "bg-purple-500",
-		};
-		return colors[status] || "bg-gray-500";
 	};
 
 	const formatStatus = (status: string) => {

@@ -6,10 +6,8 @@ import { useReadyToCloseCases, Case } from "@/queries/cases";
 import { format } from "date-fns";
 import {
 	FileText,
-	User,
 	Calendar,
 	Search,
-	Filter,
 	ArrowUpDown,
 	ChevronLeft,
 	ChevronRight,

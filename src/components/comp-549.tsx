@@ -80,7 +80,14 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
 interface FileUploaderProps {
 	maxFiles?: number;
 	maxSize?: number;
-	onFilesChange?: (files: any[]) => void;
+	onFilesChange?: (
+		files: Array<{
+			id: string;
+			file:
+				| File
+				| { name: string; size: number; type: string; url: string; id: string };
+		}>
+	) => void;
 	showInitialFiles?: boolean;
 }
 
