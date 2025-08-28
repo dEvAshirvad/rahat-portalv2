@@ -533,7 +533,7 @@ function CaseDetailPage() {
 											window.location.reload();
 										}}
 									/>
-									{caseItem.status !== "closed" && (
+									{caseItem.stage === "closed" && (
 										<Button asChild variant="destructive" size="sm">
 											<Link href={`/cases/${caseItem.caseId}/close`}>
 												<CheckCircle className="size-4 mr-2" />
