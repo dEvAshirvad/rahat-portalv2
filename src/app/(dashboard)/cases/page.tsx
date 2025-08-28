@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Case, useAllCases } from "@/queries/cases";
 import { useSession } from "@/queries/auth";
+import { CollectorOnly } from "@/components/role-guard";
 import {
 	Card,
 	CardContent,
@@ -72,13 +73,31 @@ const SORT_OPTIONS = [
 ];
 
 export default function CasesPage() {
+	return (
+		<CollectorOnly>
+			<CasesPageContent />
+		</CollectorOnly>
+	);
+}
+
+function CasesPageContent() {
 	const { data: session } = useSession();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 	const [statusFilter, setStatusFilter] = useState("all");
 	const [sortBy, setSortBy] = useState("createdAt");
 	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+	// Debounce search query
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearchQuery(searchQuery);
+		}, 500); // 500ms delay
+
+		return () => clearTimeout(timer);
+	}, [searchQuery]);
 
 	// API parameters
 	const params = {
@@ -87,16 +106,16 @@ export default function CasesPage() {
 		status: statusFilter !== "all" ? statusFilter : undefined,
 		sortBy,
 		sortDirection,
-		search: searchQuery || undefined,
+		search: debouncedSearchQuery || undefined,
 	};
 
 	const { data: casesData, isLoading, error } = useAllCases(params);
 
 	// Handlers
-	const handleSearch = (value: string) => {
+	const handleSearch = useCallback((value: string) => {
 		setSearchQuery(value);
 		setCurrentPage(1); // Reset to first page when searching
-	};
+	}, []);
 
 	const handleStatusFilter = (status: string) => {
 		setStatusFilter(status);

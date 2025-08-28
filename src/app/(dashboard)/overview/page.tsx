@@ -2,6 +2,7 @@
 
 import { useCaseStats } from "@/queries/overview";
 import { useSession } from "@/queries/auth";
+import { CollectorOnly } from "@/components/role-guard";
 import {
 	Card,
 	CardContent,
@@ -28,6 +29,14 @@ import {
 import Link from "next/link";
 
 export default function OverviewPage() {
+	return (
+		<CollectorOnly>
+			<OverviewPageContent />
+		</CollectorOnly>
+	);
+}
+
+function OverviewPageContent() {
 	const { data: session } = useSession();
 	const { data: statsData, isLoading, error } = useCaseStats();
 

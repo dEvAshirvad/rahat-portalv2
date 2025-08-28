@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSession } from "@/queries/auth";
 import { useReadyToCloseCases, Case } from "@/queries/cases";
+import { TehsildarOnly } from "@/components/role-guard";
 import { format } from "date-fns";
 import {
 	FileText,
@@ -50,13 +51,31 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function ReadyToClosePage() {
+export default function ReadyToClosePage() {
+	return (
+		<TehsildarOnly>
+			<ReadyToClosePageContent />
+		</TehsildarOnly>
+	);
+}
+
+function ReadyToClosePageContent() {
 	const { data: session } = useSession();
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 	const [sortBy, setSortBy] = useState("createdAt");
 	const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+	// Debounce search query
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearchQuery(searchQuery);
+		}, 500); // 500ms delay
+
+		return () => clearTimeout(timer);
+	}, [searchQuery]);
 
 	const {
 		data: casesData,
@@ -114,6 +133,11 @@ function ReadyToClosePage() {
 			stage.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
 		);
 	};
+
+	const handleSearch = useCallback((value: string) => {
+		setSearchQuery(value);
+		setCurrentPage(1); // Reset to first page when searching
+	}, []);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
@@ -240,7 +264,7 @@ function ReadyToClosePage() {
 									<Input
 										placeholder="Search cases..."
 										value={searchQuery}
-										onChange={(e) => setSearchQuery(e.target.value)}
+										onChange={(e) => handleSearch(e.target.value)}
 										className="pl-10"
 									/>
 								</div>
@@ -505,5 +529,3 @@ function ReadyToClosePage() {
 		</div>
 	);
 }
-
-export default ReadyToClosePage;

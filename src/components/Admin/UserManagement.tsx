@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
 	useListUsers,
 	useCreateUserMutation,
@@ -66,6 +66,8 @@ import {
 	Loader2,
 	ChevronLeft,
 	ChevronRight,
+	ChevronFirst,
+	ChevronLast,
 } from "lucide-react";
 import {
 	DropdownMenu,
@@ -119,6 +121,8 @@ const RAHAT_ROLES = [
 export default function UserManagement() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
+	const [searchQuery, setSearchQuery] = useState("");
+	const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
 	const [searchParams, setSearchParams] = useState<ListUsersParams>({
 		limit: pageSize,
@@ -132,6 +136,26 @@ export default function UserManagement() {
 	const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
 	const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 	const [banDialogOpen, setBanDialogOpen] = useState(false);
+
+	// Debounce search query
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearchQuery(searchQuery);
+		}, 1000); // 1000ms delay
+
+		return () => clearTimeout(timer);
+	}, [searchQuery]);
+
+	// Update search params when debounced query changes
+	useEffect(() => {
+		setCurrentPage(1); // Reset to first page when searching
+		setSearchParams((prev) => ({
+			...prev,
+			searchValue: debouncedSearchQuery,
+			limit: pageSize,
+			offset: 0,
+		}));
+	}, [debouncedSearchQuery, pageSize]);
 
 	// Queries and mutations
 	const { data: usersData, isLoading, refetch } = useListUsers(searchParams);
@@ -172,15 +196,9 @@ export default function UserManagement() {
 	});
 
 	// Handlers
-	const handleSearch = (value: string) => {
-		setCurrentPage(1); // Reset to first page when searching
-		setSearchParams((prev) => ({
-			...prev,
-			searchValue: value,
-			limit: pageSize,
-			offset: 0,
-		}));
-	};
+	const handleSearch = useCallback((value: string) => {
+		setSearchQuery(value);
+	}, []);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
@@ -462,6 +480,7 @@ export default function UserManagement() {
 							<Input
 								placeholder="Search users..."
 								className="pl-10"
+								value={searchQuery}
 								onChange={(e) => handleSearch(e.target.value)}
 							/>
 						</div>
@@ -596,8 +615,7 @@ export default function UserManagement() {
 												onClick={() => handlePageChange(1)}
 												disabled={currentPage === 1}>
 												<span className="sr-only">Go to first page</span>
-												<ChevronLeft className="h-4 w-4" />
-												<ChevronLeft className="h-4 w-4" />
+												<ChevronFirst className="h-4 w-4" />
 											</Button>
 											<Button
 												variant="outline"
@@ -629,8 +647,7 @@ export default function UserManagement() {
 													currentPage === Math.ceil(usersData.total / pageSize)
 												}>
 												<span className="sr-only">Go to last page</span>
-												<ChevronRight className="h-4 w-4" />
-												<ChevronRight className="h-4 w-4" />
+												<ChevronLast className="h-4 w-4" />
 											</Button>
 										</div>
 									</div>
