@@ -26,6 +26,7 @@ import {
 	ChevronsLeft,
 	ChevronsRight,
 	Download,
+	CheckCircle,
 } from "lucide-react";
 import {
 	Select,
@@ -197,7 +198,20 @@ const columns: ColumnDef<Case>[] = [
 						title="View Case Details">
 						<Eye className="size-4" />
 					</Button>
-					<DownloadButton caseId={row.original.caseId} />
+					{row.original.stage === "closed" &&
+						row.original.status === "pending" && (
+							<Button
+								variant="outline"
+								size="icon"
+								onClick={(e) => {
+									e.stopPropagation();
+									// Navigate to case details
+									window.open(`/cases/${caseNumber}/close`, "_blank");
+								}}
+								title="Close Case">
+								<CheckCircle className="size-4" />
+							</Button>
+						)}
 					{row.original.stage === "doc_upload" && (
 						<DocumentUploadDialog
 							caseId={caseId}
