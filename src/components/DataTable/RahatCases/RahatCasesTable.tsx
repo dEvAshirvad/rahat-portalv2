@@ -61,6 +61,15 @@ const columns: ColumnDef<Case>[] = [
 		},
 	},
 	{
+		accessorKey: "caseType",
+		header: () => {
+			return <p className="text-sm font-medium pl-4">Case Type</p>;
+		},
+		cell: ({ row }) => {
+			return <div className="font-medium pl-4">{row.original.caseType}</div>;
+		},
+	},
+	{
 		accessorKey: "stage",
 		header: () => {
 			return <p className="text-sm font-medium">Stage</p>;

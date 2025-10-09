@@ -52,6 +52,7 @@ export interface RoleUserMap {
 
 export interface Case {
 	_id: string;
+	caseType: "unnatural-death" | "hit-and-run";
 	roleUserMap: RoleUserMap;
 	victim: Victim;
 	stage: string;
