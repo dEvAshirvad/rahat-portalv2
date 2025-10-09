@@ -50,8 +50,11 @@ import { Plus, Loader2, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AxiosError } from "axios";
 
+const caseTypeZodEnum = z.enum(["unnatural-death", "hit-and-run"]);
+
 // Form validation schema
 const createCaseSchema = z.object({
+	caseType: caseTypeZodEnum,
 	victim: z.object({
 		name: z.string().min(1, "Victim name is required"),
 		dob: z.string().min(1, "Date of birth is required"),
@@ -100,6 +103,7 @@ export default function CreateCaseDialog({ onSuccess }: CreateCaseDialogProps) {
 	const form = useForm<CreateCaseFormData>({
 		resolver: zodResolver(createCaseSchema),
 		defaultValues: {
+			caseType: "unnatural-death",
 			victim: {
 				name: "",
 				dob: "",
@@ -166,6 +170,33 @@ export default function CreateCaseDialog({ onSuccess }: CreateCaseDialogProps) {
 							<h3 className="text-lg font-semibold">Victim Information</h3>
 
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<FormField
+									control={form.control}
+									name="caseType"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Case Type *</FormLabel>
+											<FormControl>
+												<Select
+													onValueChange={field.onChange}
+													defaultValue={field.value}>
+													<SelectTrigger className="w-full">
+														<SelectValue placeholder="Select case type" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="unnatural-death">
+															Unnatural Death
+														</SelectItem>
+														<SelectItem value="hit-and-run">
+															Hit and Run
+														</SelectItem>
+													</SelectContent>
+												</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 								<FormField
 									control={form.control}
 									name="victim.name"
@@ -291,7 +322,7 @@ export default function CreateCaseDialog({ onSuccess }: CreateCaseDialogProps) {
 												onValueChange={field.onChange}
 												defaultValue={field.value}>
 												<FormControl>
-													<SelectTrigger>
+													<SelectTrigger className="w-full">
 														<SelectValue placeholder="Select relation" />
 													</SelectTrigger>
 												</FormControl>

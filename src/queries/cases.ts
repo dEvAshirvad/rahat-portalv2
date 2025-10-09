@@ -68,6 +68,7 @@ export interface Case {
 }
 
 export interface CreateCaseRequest {
+	caseType: "unnatural-death" | "hit-and-run";
 	victim: Victim;
 	thanaInchargeId: string;
 }
